@@ -7,22 +7,27 @@ it('should return true', () => {
 })
 
 
-const functionundertest = () => {throw new bs.AssertionError("Testing A")};
 
-describe('Testing Error States', () => {
+
+describe('Custom Error class', () => {
+
+  const throw_assertion_error = () => {throw new bs.AssertionError("Testing A")};
+
   it('Throws an error', () => {
     try {
-      functionundertest(); // this should fail
-      assert.fail('expected exception not thrown'); // this throws an AssertionError
+      throw_assertion_error(); // this should fail
+      assert.fail('Expected exception not thrown'); // this throws an AssertionError
     } catch (e) { // this catches all errors, those thrown by the function under test
                   // and those thrown by assert.fail
-      if (e instanceof AssertionError) {
-        // bubble up the assertion error
+      if (e.message === "Expected exception not thrown") {
         throw e;
       }
-      console.log("Message:")
-      console.log(e);
-      assert.equal(e.message, 'AssertionError: Testing A');
+      else{
+        console.log("Message:")
+        console.log(e.message);
+        assert.equal(e.message, 'AssertionError: Testing A');
+      }
+      
     }
   });
 });
