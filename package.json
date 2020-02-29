@@ -1,7 +1,7 @@
 {
-  "name": "python_utils_for_js",
-  "version": "0.1.0-alpha",
-  "description": "Basic utils from Python to ease working with Javascript",
+  "name": "basic_utils",
+  "version": "0.2.0-alpha",
+  "description": "Simple basic utils borrowed from Python builtins and libraries.",
   "main": "./src/basic_utils.js",
   "scripts": {
     "test": "mocha --require @babel/register",
