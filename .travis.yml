@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- stable
+jobs:
+  include:
+    - stage: test
+      script: npm run test
+    - stage: build and release
+      script: npm run build
+    - deploy:
+        cleanup: false
+        provider: releases
+        api_key:
+          secure: BMLLBhQcI+Or3PEMmk2r8z571noYPU4cEUNFbx+x1rQu1HgPB7k7zYVx0OAvpSWbWe7k88GyAVRmK2Qf6/cMUlnPwZ0IUQTl++AbMWY+2cdhhZ5gkr8HVgAHFfdFKUT16tj8ZvoSx2rAC1Ao4lcn1GGKQrm2J2B1vH4ZlDCcSC+8Eu1Fd2EOHCMal64E0sblc3QEqgJt43rvhTEQaxvkXpLP1SIeJ7rlEmBBhG6p7eSq3fMTc5GsLvEwnB5QYmTy/DnqkLSApuAiiC7QIz25YDAeQM3i6oRsbwG8AaPohFJT3bMOx7Jh8CZy8krCmglb5NOQT4ls79IFCwNl5LTXE8noOYs0pSHHpT8qUBiuTp2XYCu3DsQ7EmQhMVsTM0ZhZZuCfwbkyfWqVU5JTkzSaTQhazBUfPdey/mPcSBsWFK5bT/dFjWaB2IkLUHt/DT6W1s6wOTgCUxbdKDWlBZ+S0pA4lX26YdSCLRmEaYyRAS1eorV/fJfbKBD2kCwbu4QA9ohN3WAPcKQnHc+nSliHRviGAsVBimSF3ZYhDM8ShsAdQ9sgpHJz/7Z09RDCvfKeMHOK8Qjemr8o4wU0u130zuYivi59WzD+N/hC+SkNAcV7idADr9ZnW8WGfMeO0EptREG4g+DEvHgCjLCA85smnmAWSeKJlTPyVlzJnjyEIU=
+        file: ./dist/canvasplotlib.js
+        on:
+          repo: fcole90/canvasplotlib
+          tags: true

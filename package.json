@@ -1,0 +1,35 @@
+{
+  "name": "python_utils_for_js",
+  "version": "0.1.0-alpha",
+  "description": "Basic utils from Python to ease working with Javascript",
+  "main": "./src/basic_utils.js",
+  "scripts": {
+    "test": "mocha --require @babel/register",
+    "test_cov": "nyc --reporter=text --reporter=lcov --check-coverage npm test",
+    "test_cov_strict": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 npm test",
+    "build": "rollup -c",
+    "watch": "rollup --watch",
+    "server": "webpack-dev-server --open"
+  },
+  "author": "Fabio Colella",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0",
+    "rollup": "^1.31.1",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "dependencies": {
+    "core-js": "^3.6.4"
+  }
+}
