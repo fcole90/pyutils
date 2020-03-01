@@ -9,7 +9,7 @@ jobs:
     script: npm run test
     after_success: npm run coverage
   - stage: build
-    script: npm run build
+    script: npm run build && ls
   - stage: checkup
   - script: pwd && ls && cd dist || cd .. && ls && cd ..
   - deploy:
