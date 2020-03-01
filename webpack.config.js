@@ -1,5 +1,5 @@
 let path = require("path");
-const filename = "basic_utils";
+const filename = "pyutils";
 
 const node_config = {
   target: "node",

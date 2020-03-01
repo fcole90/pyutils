@@ -1,5 +1,5 @@
 let path = require("path");
-const filename = "basic_utils";
+const filename = "pyutils";
 export default {
     input: path.resolve(__dirname, "src", `${filename}.js`),
     output: [

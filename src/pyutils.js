@@ -2,11 +2,11 @@
  *
  * Implements basic utilities to simplify everyday coding in JS while keeping it safe.
  *
- * @module libs/basic_utils
+ * @module pyutils
  */
 
 /* Define the butils namespace */
-let bs = {};
+let py = {};
 
 
 
@@ -18,27 +18,27 @@ let bs = {};
 
 
 /* Basic types (recognised by typeof) */
-bs.TYPE_NUMBER = "number";
-bs.TYPE_STRING = "string";
-bs.TYPE_BOOLEAN = "boolean";
-bs.TYPE_BIGINT = "bigint";
-bs.TYPE_FUNCTION = "function";
-bs.TYPE_SYMBOL = "symbol";
-bs.TYPE_UNDEFINED = "undefined";
+py.TYPE_NUMBER = "number";
+py.TYPE_STRING = "string";
+py.TYPE_BOOLEAN = "boolean";
+py.TYPE_BIGINT = "bigint";
+py.TYPE_FUNCTION = "function";
+py.TYPE_SYMBOL = "symbol";
+py.TYPE_UNDEFINED = "undefined";
 
 /* Basic objects */
-bs.TYPE_OBJECT = "Object";
-bs.TYPE_ARRAY = "Array";
-bs.TYPE_STRING_OBJECT = "String";
-bs.TYPE_NULL = "null";
+py.TYPE_OBJECT = "Object";
+py.TYPE_ARRAY = "Array";
+py.TYPE_STRING_OBJECT = "String";
+py.TYPE_NULL = "null";
 
 /* Additional library objects */
-bs.BSTYPE_DICT = "Dictionary";
+py.TYPE_PY_DICT = "Dictionary";
 
 /* Type aliases */
-bs.True = true;
-bs.False = false;
-bs.None = null;
+py.True = true;
+py.False = false;
+py.None = null;
 
 
 
@@ -62,29 +62,31 @@ class CustomError extends Error {
     constructor(name, message=null, ...params) {
         super(...params);
 
-        if (bs.in(bs.type(name), [bs.TYPE_STRING_OBJECT, bs.TYPE_STRING]) === false) {
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+        //if (Error.captureStackTrace) {
+        //    Error.captureStackTrace(this, CustomError)
+        //}
+
+        if (py.in(py.type(name), [py.TYPE_STRING_OBJECT, py.TYPE_STRING]) === false) {
             throw new TypeError(
-                `name is not a string. Type: ${bs.type(name)}`
+                `name is not a string. Type: ${py.type(name)}`
             )
         }
         else {
-            this.name = name;
-        }
-
-        if (bs.is_null_or_undefined(message)) {
-            message = this.name;
-        }
-        else {
-            message = `${this.name}: ${message}`;
-        }
-
-        this.message = message;
-
+            if (py.is_null_or_undefined(message)) {
+                this.message = name;
+                this.name = "CustomError";
+            }
+            else {
+                this.message = message;
+                this.name = name;
+            }
+         }
     }
-
 }
 
-bs.CustomError = CustomError;
+py.CustomError = CustomError;
 
 
 /**
@@ -92,12 +94,12 @@ bs.CustomError = CustomError;
  *
  * Thrown when an assert statement fails.
  */
-class AssertionError extends bs.CustomError {
+class AssertionError extends py.CustomError {
     constructor(message=null, ...params) {
         super("AssertionError", message, ...params);
     }
 }
-bs.AssertionError = AssertionError;
+py.AssertionError = AssertionError;
 
 
 /**
@@ -110,7 +112,7 @@ class KeyError extends CustomError {
         super("KeyError", message, ...params);
     }
 }
-bs.KeyError = KeyError;
+py.KeyError = KeyError;
 
 
 /**
@@ -119,13 +121,13 @@ bs.KeyError = KeyError;
  * Thrown when an error is detected that doesn’t fall in any of the other categories.
  * The associated value is a string indicating what precisely went wrong.
  */
-class RuntimeError extends bs.CustomError {
+class RuntimeError extends py.CustomError {
     constructor(message=null, ...params) {
         super("RuntimeError", message, ...params);
     }
 }
 
-bs.RuntimeError = RuntimeError;
+py.RuntimeError = RuntimeError;
 
 
 /**
@@ -134,12 +136,12 @@ bs.RuntimeError = RuntimeError;
  * Thrown when an operation or function receives an argument that has the right type but an inappropriate value,
  * and the situation is not described by a more precise exception such as KeyError.
  */
-class ValueError extends bs.CustomError {
+class ValueError extends py.CustomError {
     constructor(message=null, ...params) {
         super("ValueError", message, ...params);
     }
 }
-bs.ValueError = ValueError;
+py.ValueError = ValueError;
 
 
 
@@ -156,27 +158,27 @@ bs.ValueError = ValueError;
  */
 class Dictionary {
     constructor(init_seq) {
-        if (bs.is_null_or_undefined(init_seq) === false){
-            if (bs.type(init_seq) === bs.TYPE_ARRAY) {
+        if (py.is_null_or_undefined(init_seq) === false){
+            if (py.type(init_seq) === py.TYPE_ARRAY) {
                 // If a proper list is provided, use it to initialise the dictionary
                 for (let i = 0; i < init_seq.length; i++) {
                     let key_i, value_i;
                     [key_i, value_i] = init_seq[i];
 
-                    if (bs.not_in(bs.type(key_i), [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])) {
+                    if (py.not_in(py.type(key_i), [py.TYPE_STRING, py.TYPE_STRING_OBJECT])) {
                         TypeError(`Element key [${i}] = ${key_i} should be a string but is of type ${type(key_i)}`);
                     }
                     this[key_i] = value_i;
                 }
             }
-            else if (!bs.is_null_or_undefined(Object.keys(init_seq))) {
+            else if (!py.is_null_or_undefined(Object.keys(init_seq))) {
                 let keys = Object.keys(init_seq);
                 for (let i = 0; i < keys.length; i++) {
                     this[keys[i]] = init_seq[keys[i]];
                 }
             }
             else {
-                throw new bs.ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`);
+                throw new py.ValueError(`the given argument of type '${init_seq}' cannot be converted to dictionary.`);
             }
         }
     }
@@ -189,7 +191,7 @@ class Dictionary {
     }
 
     del(key) {
-        if (bs.in(key, this.keys())) { delete this[key]; }
+        if (py.in(key, this.keys())) { delete this[key]; }
     }
 
     keys() {
@@ -208,7 +210,7 @@ class Dictionary {
     }
 }
 
-bs.Dictionary = Dictionary;
+py.Dictionary = Dictionary;
 
 
 
@@ -221,7 +223,7 @@ bs.Dictionary = Dictionary;
 
 
 /** Simple alias */
-bs.print = console.log;
+py.print = console.log;
 
 
 
@@ -239,43 +241,57 @@ bs.print = console.log;
  * @param {string} message - Message to display in case of failure
  * @param {ErrorConstructor} error_constructor - Type of error to display
  */
-bs.assert = function(condition, message=null, error_constructor=bs.AssertionError) {
+py.assert = function(condition, message=null, error_constructor=py.AssertionError) {
 
-    if (bs.is_null_or_undefined(error_constructor)) {
-        throw new bs.ValueError();
+    if (py.is_null_or_undefined(condition)) {
+        throw new py.ValueError("the condition cannot be null");
+    }
+    else if (py.not_in(condition, [py.TYPE_BOOLEAN, py.TYPE_BOOLEAN_OBJECT])) {
+        throw new py.ValueError(`the condition must be a boolean. Found: ${py.type(condition)}`);
+    }
+
+    if (!py.is_not_null_or_undefined(message)) {
+        message = py.str(message);
+    }
+
+    if (py.is_null_or_undefined(error_constructor)) {
+        throw new py.ValueError();
     }
 
     if (condition === false) {
         throw new error_constructor(message);
     }
+    else {
+        return true;
+    }
 };
 
-bs.assert_len = function(obj, expected_length, message=null, error_constructor=bs.AssertionError) {
-    const obj_len = bs.len(obj);
-    if (bs.is_null_or_undefined(message)) {
+py.assert_len = function(obj, expected_length, message=null, error_constructor=py.AssertionError) {
+    const obj_len = py.len(obj);
+    if (py.is_null_or_undefined(message)) {
         message = `Expected length ${expected_length} but found ${obj_len} instead.`
     }
-    bs.assert(obj_len === expected_length, message, error_constructor);
+    py.assert(obj_len === expected_length, message, error_constructor);
 };
 
-bs.assert_type = function (obj, expected_types) {
-    let obj_type = bs.type(obj);
-    if (bs.in(bs.type(expected_types), [bs.TYPE_STRING, bs.TYPE_STRING_OBJECT])) {
-        bs.assert(
+py.assert_type = function (obj, expected_types) {
+    let obj_type = py.type(obj);
+    if (py.in(py.type(expected_types), [py.TYPE_STRING, py.TYPE_STRING_OBJECT])) {
+        py.assert(
             obj_type === expected_types,
             `Expected type '${expected_types}' but found '${obj_type}' instead.`,
             TypeError
         );
     }
-    else if (bs.type(expected_types) === bs.TYPE_ARRAY) {
-        bs.assert(
-            bs.in(obj_type, expected_types),
+    else if (py.type(expected_types) === py.TYPE_ARRAY) {
+        py.assert(
+            py.in(obj_type, expected_types),
             `Expected any of these types [${expected_types}] but found '${obj_type}' instead.`,
             TypeError
         );
     }
     else {
-        throw new TypeError(bs.type(expected_types));
+        throw new TypeError(py.type(expected_types));
     }
 };
 
@@ -285,7 +301,7 @@ bs.assert_type = function (obj, expected_types) {
  * @param {Iterable.<Iterable>} init_seq
  * @returns {Dictionary}
  */
-bs.dict = function(init_seq) {
+py.dict = function(init_seq) {
     return new Dictionary(init_seq);
 };
 
@@ -299,7 +315,7 @@ bs.dict = function(init_seq) {
  * @param {Iterable.<*>} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
-bs.in = function(value, sequence) {
+py.in = function(value, sequence) {
 
     sequence = Object.values(sequence);
 
@@ -317,8 +333,8 @@ bs.in = function(value, sequence) {
  * @param {Iterable.<*>} sequence - Sequence withing to search the value
  * @returns {boolean}
  */
-bs.not_in = function(value, sequence) {
-    return !bs.in(value, sequence);
+py.not_in = function(value, sequence) {
+    return !py.in(value, sequence);
 };
 
 
@@ -327,13 +343,13 @@ bs.not_in = function(value, sequence) {
  * @param {*} obj - A variable.
  * @returns {boolean}
  */
-bs.is_null_or_undefined = function(obj) {
-    let obj_t = bs.type(obj);
-    return obj_t === bs.TYPE_NULL || obj_t === bs.TYPE_UNDEFINED;
+py.is_null_or_undefined = function(obj) {
+    let obj_t = py.type(obj);
+    return obj_t === py.TYPE_NULL || obj_t === py.TYPE_UNDEFINED;
 };
 
-bs.is_not_null_or_undefined = function(obj) {
-    return bs.is_null_or_undefined(obj) === false;
+py.is_not_null_or_undefined = function(obj) {
+    return py.is_null_or_undefined(obj) === false;
 };
 
 /**
@@ -343,17 +359,17 @@ bs.is_not_null_or_undefined = function(obj) {
  */
 function len(obj) {
     let len_value = obj.length;
-    if (bs.is_null_or_undefined(len_value)) {
-        throw new TypeError(`object of type '${bs.type(obj)}' has no length`);
+    if (py.is_null_or_undefined(len_value)) {
+        throw new TypeError(`object of type '${py.type(obj)}' has no length`);
     }
-    else if (bs.type(len_value) !== bs.TYPE_NUMBER) {
-        throw new TypeError(`object of type '${bs.type(obj)}' has length of type '${bs.type(len_value)}' instead of '${bs.TYPE_NUMBER}'`);
+    else if (py.type(len_value) !== py.TYPE_NUMBER) {
+        throw new TypeError(`object of type '${py.type(obj)}' has length of type '${py.type(len_value)}' instead of '${py.TYPE_NUMBER}'`);
     }
     else {
         return obj.length;
     }
 }
-bs.len = len;
+py.len = len;
 
 
 /**
@@ -363,12 +379,12 @@ bs.len = len;
  * @param extension
  * @returns {string}
  */
-bs.module_path = function(path, module_name, extension="mjs") {
+py.module_path = function(path, module_name, extension="mjs") {
     return `${path}/${module_name}.${extension}`;
 };
 
 
-bs.str = function(value) {
+py.str = function(value) {
     return String(value);
 };
 
@@ -378,7 +394,7 @@ bs.str = function(value) {
  * @param {*} obj - Any kind of object.
  * @returns {string|*|"undefined"|"object"|"boolean"|"number"|"string"|"function"|"symbol"|"bigint"}
  */
-bs.type = function(obj) {
+py.type = function(obj) {
   // Null object
   if (obj === null) {
       return "null";
@@ -389,15 +405,15 @@ bs.type = function(obj) {
       return typeof obj;
   }
 
+  // Constructed objects
+  if (obj.constructor.name !== "undefined") {
+      return obj.constructor.name;
+  }
+
   // Builtins objects
   if (Object.prototype.toString.call(obj) !== "[object Object]")
   {
       return Object.prototype.toString.call(obj).slice(8, -1);
-  }
-
-  // Constructed objects
-  if (obj.constructor.name !== "undefined") {
-      return obj.constructor.name;
   }
 
   return "object";
@@ -410,7 +426,7 @@ bs.type = function(obj) {
 //  ------------------ Final export ---------------------
 //  -----------------------------------------------------
 
-export default bs;
+export default py;
 // export { bs };
 
 
