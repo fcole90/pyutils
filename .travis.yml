@@ -10,15 +10,17 @@ jobs:
     after_success: npm run coverage
   - stage: build
     script: npm run build && ls
+  - before_deploy: ls
   - deploy:
-      skip_cleanup: true
-      skip_test: true
       provider: releases
       api_key:
         secure: Iuzj14b4woy86DPm5zkhjXdcRw/MIB2QoiFzyeVu6G5k7QRugzBUW/shrv90gj6da7FMNJUOR0H5Eli9HE4qnwYDGC0VpE0arrD8m8sr1rVn0rT6bIzrBsoFaXVSS9nFBKyxmhXd24X5IOR+FbOHq9u3WJGI1SWf2T9Mz7Glib0LmZ5E8GEUKNPD4UuQs5bNRuvszyI47QxL0eIgfeqsSteuHsp+zNY6TU0vtPJ+CzFT3uoxgmID/JsuczneuyU6l45mFuG9ZgctDkYNxyMdDiIG2rsAUo0f1QMFWLqmcONdeTnhAeFR21yYYAS1tcan3SJJzs+ex1SRmUQfLhz+vrBdYbhQW/2yCQDGDcJULcekVYOcD5HQr0L00sSwK6Lqo/6txpaCC+uO+ekxXlTzsLQqaywQ+6Xe8hXRDUStHbZhZXCcSuREZEbbubCm89lvY5dY7UDzXfgjDnqqWA3FqUwkdzY+k4ccE7a7fFgbSe/m5dd3RH8qLq8zsUP4mNcTnQZdna5oE+bhNIfelNgBGAQ6+SWDpUGbzwbtnNEEzHpEpWM70S+CdHiD+Vt5qrg2ExjHtZrq6XJHOwqzzATLay2n4ggA4C7NezDWAJc63rxS8nhZZTjkcJBQ7wRebFWj8DcYs4WbwQEw6jSDdDo5mWCb8f7q69iKpJ9LPPjYakQ=
+      skip_cleanup: true
+      skip_test: true
       file: 
         - ./dist/basic_utils.mjs
         - ./dist/basic_utils.node.js
       on:
         repo: fcole90/basic_utils
+        all_branches: true
         #tags: true 
