@@ -12,8 +12,8 @@ function expect_exception(function_exception, expectation, exception_type, excep
         throw e;
       }
       else{
-        assert.equal(e.message, exception_expected_text);
         assert.equal(py.type(e), exception_type);
+        assert.equal(e.message, exception_expected_text);
       }
     }
   });
@@ -88,7 +88,7 @@ function main() {
       () => {py.assert(3 > 5)},
       "Throws an AssertionError", 
       "AssertionError",
-      ""
+      "AssertionError"
     );
 
   });

@@ -242,15 +242,14 @@ py.print = console.log;
  * @param {ErrorConstructor} error_constructor - Type of error to display
  */
 py.assert = function(condition, message=null, error_constructor=py.AssertionError) {
-
     if (py.is_null_or_undefined(condition)) {
         throw new py.ValueError("the condition cannot be null");
     }
-    else if (py.not_in(condition, [py.TYPE_BOOLEAN, py.TYPE_BOOLEAN_OBJECT])) {
+    else if (py.not_in(py.type(condition), [py.TYPE_BOOLEAN, py.TYPE_BOOLEAN_OBJECT])) {
         throw new py.ValueError(`the condition must be a boolean. Found: ${py.type(condition)}`);
     }
 
-    if (!py.is_not_null_or_undefined(message)) {
+    if (py.is_not_null_or_undefined(message)) {
         message = py.str(message);
     }
 
