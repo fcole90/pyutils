@@ -11,11 +11,7 @@ jobs:
   - stage: build and release
     script: npm run build
   - stage: checkup
-  - script: pwd
-  - script: ls
-  - script: cd dist
-  - script: ls
-  - script: cd ..
+  - script: pwd && ls && cd dist && ls && cd ..
   - deploy:
       skip_cleanup: true
       provider: releases
