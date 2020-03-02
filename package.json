@@ -3,7 +3,9 @@
   "version": "0.2.9-alpha",
   "description": "Simple basic utils borrowed from Python builtins and libraries.",
   "homepage": "https://github.com/fcole90/pyutils",
-  "bugs": {"url" : "https://github.com/fcole90/pyutils/issues"},
+  "bugs": {
+    "url": "https://github.com/fcole90/pyutils/issues"
+  },
   "main": "dist/pyutils.node.js",
   "author": "Fabio Colella",
   "license": "MIT",
@@ -13,8 +15,8 @@
     "package.json"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/fcole90/pyutils.git"
+    "type": "git",
+    "url": "https://github.com/fcole90/pyutils.git"
   },
   "scripts": {
     "unit_test": "mocha --require @babel/register",
@@ -22,6 +24,7 @@
     "test_strict": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 npm run unit_test",
     "test_node_import": "node node_test.js",
     "coverage": "codecov",
+    "build_docs": "jsdoc -c jsdoc.conf.js",
     "build": "rollup -c",
     "watch": "rollup --watch",
     "server": "webpack-dev-server --open"
@@ -33,6 +36,7 @@
     "@babel/register": "^7.8.3",
     "babel-loader": "^8.0.6",
     "codecov": "^3.6.5",
+    "jsdoc": "^3.6.3",
     "mocha": "^7.1.0",
     "nyc": "^15.0.0",
     "rollup": "^1.31.1",

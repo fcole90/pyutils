@@ -1,5 +1,3 @@
-env:
-  - CODECOV_TOKEN="0d064cf8-d7de-4b16-8aac-2ab51d173e02"
 language: node_js
 node_js:
 - stable
@@ -9,20 +7,28 @@ jobs:
     script: npm run test
     after_success: npm run coverage
   - stage: build and deploy
-    script: npm run build && ls
+    script: npm run build && npm run build_docs && ls
     deploy:
-      provider: releases
-      api_key:
-        secure: Iuzj14b4woy86DPm5zkhjXdcRw/MIB2QoiFzyeVu6G5k7QRugzBUW/shrv90gj6da7FMNJUOR0H5Eli9HE4qnwYDGC0VpE0arrD8m8sr1rVn0rT6bIzrBsoFaXVSS9nFBKyxmhXd24X5IOR+FbOHq9u3WJGI1SWf2T9Mz7Glib0LmZ5E8GEUKNPD4UuQs5bNRuvszyI47QxL0eIgfeqsSteuHsp+zNY6TU0vtPJ+CzFT3uoxgmID/JsuczneuyU6l45mFuG9ZgctDkYNxyMdDiIG2rsAUo0f1QMFWLqmcONdeTnhAeFR21yYYAS1tcan3SJJzs+ex1SRmUQfLhz+vrBdYbhQW/2yCQDGDcJULcekVYOcD5HQr0L00sSwK6Lqo/6txpaCC+uO+ekxXlTzsLQqaywQ+6Xe8hXRDUStHbZhZXCcSuREZEbbubCm89lvY5dY7UDzXfgjDnqqWA3FqUwkdzY+k4ccE7a7fFgbSe/m5dd3RH8qLq8zsUP4mNcTnQZdna5oE+bhNIfelNgBGAQ6+SWDpUGbzwbtnNEEzHpEpWM70S+CdHiD+Vt5qrg2ExjHtZrq6XJHOwqzzATLay2n4ggA4C7NezDWAJc63rxS8nhZZTjkcJBQ7wRebFWj8DcYs4WbwQEw6jSDdDo5mWCb8f7q69iKpJ9LPPjYakQ=
-      skip_cleanup: true
-      skip_test: true
-      file: 
-        - ./dist/pyutils.mjs
-        - ./dist/pyutils.node.js
-      on:
-        repo: fcole90/pyutils
-        all_branches: true
-        tags: true 
+      - provider: releases
+        api_key:
+          secure: $GITHUB_TOKEN
+        skip_cleanup: true
+        skip_test: true
+        file: 
+          - ./dist/pyutils.mjs
+          - ./dist/pyutils.node.js
+        on:
+          repo: fcole90/pyutils
+          all_branches: true
+          tags: true
+      - provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_TOKEN
+        keep_history: true
+        local_dir: ./docs
+        on:
+          repo: fcole90/pyutils
+          branch: master
       # provider: npm
       # email: "fcole90@gmail.com"
       # api_key: "YOUR_AUTH_TOKEN"
