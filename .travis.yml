@@ -19,7 +19,7 @@ jobs:
         on:
           repo: fcole90/pyutils
           all_branches: true
-          #tags: true
+          tags: true
       - provider: pages
         skip_cleanup: true
         github_token: $GITHUB_TOKEN
