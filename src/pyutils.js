@@ -242,7 +242,7 @@ py.print = console.log;
  * @param {string} message - Message to display in case of failure
  * @param {ErrorConstructor} error_constructor - Type of error to display
  */
-assert = function(condition, message=null, error_constructor=py.AssertionError) {
+function assert(condition, message=null, error_constructor=py.AssertionError) {
     if (py.is_null_or_undefined(condition)) {
         throw new py.ValueError("the condition cannot be null");
     }
