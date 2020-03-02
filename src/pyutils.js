@@ -18,6 +18,7 @@ let py = {};
 
 
 /* Basic types (recognised by typeof) */
+/**@constant */
 py.TYPE_NUMBER = "number";
 py.TYPE_STRING = "string";
 py.TYPE_BOOLEAN = "boolean";
@@ -241,7 +242,7 @@ py.print = console.log;
  * @param {string} message - Message to display in case of failure
  * @param {ErrorConstructor} error_constructor - Type of error to display
  */
-py.assert = function(condition, message=null, error_constructor=py.AssertionError) {
+assert = function(condition, message=null, error_constructor=py.AssertionError) {
     if (py.is_null_or_undefined(condition)) {
         throw new py.ValueError("the condition cannot be null");
     }
@@ -264,6 +265,7 @@ py.assert = function(condition, message=null, error_constructor=py.AssertionErro
         return true;
     }
 };
+py.assert = assert;
 
 py.assert_len = function(obj, expected_length, message=null, error_constructor=py.AssertionError) {
     const obj_len = py.len(obj);

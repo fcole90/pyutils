@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    "plugins": [],
+    "plugins": ["plugins/markdown"],
     "recurseDepth": 10,
     "source": {
         "include": [
@@ -22,6 +22,8 @@ module.exports = {
         "encoding": "utf8",               // same as -e utf8
         "destination": "./docs/",         // same as -d ./out/
         "recurse": true,                  // same as -r
-        //"tutorials": "path/to/tutorials", // same as -u path/to/tutorials
+        "tutorials": "./additional_docs",   // same as -u path/to/tutorials
+        //"package": "./package.json",
+        "readme": "./README.md",
     }
 };
