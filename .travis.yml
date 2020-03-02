@@ -10,8 +10,7 @@ jobs:
     script: npm run build && npm run build_docs && ls
     deploy:
       - provider: releases
-        api_key:
-          secure: $GITHUB_TOKEN
+        api_key: $GITHUB_TOKEN
         skip_cleanup: true
         skip_test: true
         file: 
@@ -20,7 +19,7 @@ jobs:
         on:
           repo: fcole90/pyutils
           all_branches: true
-          tags: true
+          #tags: true
       - provider: pages
         skip_cleanup: true
         github_token: $GITHUB_TOKEN
