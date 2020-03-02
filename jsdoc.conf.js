@@ -15,10 +15,14 @@ module.exports = {
     },
     "templates": {
         "cleverLinks": false,
-        "monospaceLinks": false
+        "monospaceLinks": false,
+        // Docstrap options
+        "theme": "cosmo",
+        "linenums": true
+        // Other options at: https://docstrap.github.io/docstrap/themes/cosmo/index.html
     },
     "opts": {
-        //"template": "templates/default",  // same as -t templates/default
+        "template": "./node_modules/ink-docstrap/template",  // same as -t templates/default
         "encoding": "utf8",               // same as -e utf8
         "destination": "./docs/",         // same as -d ./out/
         "recurse": true,                  // same as -r
