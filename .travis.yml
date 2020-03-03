@@ -10,8 +10,9 @@ jobs:
     script: npm run build && npm run build_docs && ls
     deploy:
       - provider: releases
+        edge: true # uses the next vesion of the dpl deployment
         api_key: $GITHUB_TOKEN
-        skip_cleanup: true
+        cleanup: false
         skip_test: true
         file: 
           - ./dist/pyutils.mjs
@@ -21,7 +22,8 @@ jobs:
           all_branches: true
           tags: true
       - provider: pages
-        skip_cleanup: true
+        edge: true # uses the next vesion of the dpl deployment
+        cleanup: false
         github_token: $GITHUB_TOKEN
         keep_history: true
         local_dir: ./docs
