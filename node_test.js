@@ -1,4 +1,4 @@
-const bs = require("./dist/pyutils.node");
+const py = require("./dist/pyutils.node");
 console.log("Module content:");
-console.log(bs);
-bs.print("Node test passed!");
+console.log(py);
+py.print("Node test passed!");

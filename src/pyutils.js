@@ -1,15 +1,12 @@
-/** Basic utils.
+/** Pyutils.
  *
- * Implements basic utilities to simplify everyday coding in JS while keeping it safe.
+ * Simple basic utils borrowed from Python builtins and libraries.
  *
  * @module pyutils
  */
 
-/* Define the butils namespace */
+/* Define the pyutils namespace */
 let py = {};
-
-
-
 
 //  -----------------------------------------------------
 //  ------------------- Definitions ---------------------
@@ -18,20 +15,81 @@ let py = {};
 
 
 /* Basic types (recognised by typeof) */
-/**@constant */
-py.TYPE_NUMBER = "number";
-py.TYPE_STRING = "string";
-py.TYPE_BOOLEAN = "boolean";
-py.TYPE_BIGINT = "bigint";
-py.TYPE_FUNCTION = "function";
-py.TYPE_SYMBOL = "symbol";
-py.TYPE_UNDEFINED = "undefined";
+/**Javascript native basic type: number
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_NUMBER = "number";
+py.TYPE_NUMBER = TYPE_NUMBER;
+
+/**Javascript native string type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_STRING = "string";
+py.TYPE_STRING = TYPE_STRING;
+
+/**Javascript native boolean type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_BOOLEAN = "boolean";
+py.TYPE_BOOLEAN = TYPE_BOOLEAN;
+
+/**Javascript basic bigint type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_BIGINT = "bigint";
+py.TYPE_BIGINT = TYPE_BIGINT;
+
+/**Javascript basic function type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_FUNCTION = "function";
+py.TYPE_FUNCTION = TYPE_FUNCTION;
+
+/**Javascript basic symbol type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_SYMBOL = "symbol";
+py.TYPE_SYMBOL = TYPE_SYMBOL;
+
+/**Javascript basic undefined type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_UNDEFINED = "undefined";
+py.TYPE_UNDEFINED = TYPE_UNDEFINED;
 
 /* Basic objects */
+/**Javascript Object type
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_OBJECT = "Object";
 py.TYPE_OBJECT = "Object";
-py.TYPE_ARRAY = "Array";
-py.TYPE_STRING_OBJECT = "String";
-py.TYPE_NULL = "null";
+
+
+const TYPE_ARRAY = "Array";
+py.TYPE_ARRAY = TYPE_ARRAY;
+
+
+const TYPE_STRING_OBJECT = "String";
+py.TYPE_STRING_OBJECT = TYPE_STRING_OBJECT;
+
+const TYPE_NULL = "null";
+py.TYPE_NULL = TYPE_STRING_OBJECT;
 
 /* Additional library objects */
 py.TYPE_PY_DICT = "Dictionary";
@@ -237,6 +295,27 @@ py.print = console.log;
 
 
 /**
+ * Return the absolute value of a number. The argument may be an integer or a floating point number.
+ * If x defines `__abs__()`, `abs(x)` returns `x.__abs__()`.
+ *
+ * __Note:__ It has no specific support for complex numbers yet.
+ *
+ * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#abs}
+ * @param x {number}
+ * @returns {number}
+ */
+function abs(x) {
+    if (type(x.__abs__) === TYPE_FUNCTION) {
+        return x.__abs__();
+    }
+    else {
+        return Math.abs(x);
+    }
+}
+
+
+
+/**
  * Convenient way to insert debugging assertions into a program.
  * @param {boolean} condition - Condition to test
  * @param {string} message - Message to display in case of failure
@@ -385,6 +464,42 @@ py.module_path = function(path, module_name, extension="mjs") {
 };
 
 
+/**
+ * Returns a range iterator in the given range.
+ * @generator
+ * @param start {!number} - The starting value. If no
+ * @param stop {?number}
+ * @param step {?number}
+ * @throws ValueError - If the step is 0
+ * @yields {number}
+ */
+function* range(start, stop = null, step = 1) {
+    if (step === 0) {
+        throw new ValueError("The step cannot be 0");
+    }
+    if (stop === null) {
+        stop = start;
+        start = 0;
+    }
+    if (step === null) {
+        step = 1;
+    }
+    if (stop > start) {
+        for (let i = start; i < stop; i += step) {
+            yield i;
+        }
+    }
+    else {
+        for (let i = start; i > stop; i += step) {
+            yield i;
+        }
+    }
+
+}
+py.range = range;
+
+
+
 py.str = function(value) {
     return String(value);
 };
@@ -395,7 +510,7 @@ py.str = function(value) {
  * @param {*} obj - Any kind of object.
  * @returns {string|*|"undefined"|"object"|"boolean"|"number"|"string"|"function"|"symbol"|"bigint"}
  */
-py.type = function(obj) {
+function type(obj) {
   // Null object
   if (obj === null) {
       return "null";
@@ -419,6 +534,7 @@ py.type = function(obj) {
 
   return "object";
 };
+py.type = type;
 
 
 
