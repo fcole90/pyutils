@@ -1,12 +1,17 @@
 /** Pyutils.
+ * @module pyutils
  *
  * Simple basic utils borrowed from Python builtins and libraries.
  *
- * @module pyutils
+ * Both the builtins commands and the standard functions are
+ * implemented as functions.
+ *
+ *
  */
 
 /* Define the pyutils namespace */
 let py = {};
+
 
 //  -----------------------------------------------------
 //  ------------------- Definitions ---------------------
@@ -23,7 +28,7 @@ let py = {};
 const TYPE_NUMBER = "number";
 py.TYPE_NUMBER = TYPE_NUMBER;
 
-/**Javascript native string type
+/**Javascript native basic type: string
  * @constant
  * @type {string}
  * @default
@@ -31,7 +36,7 @@ py.TYPE_NUMBER = TYPE_NUMBER;
 const TYPE_STRING = "string";
 py.TYPE_STRING = TYPE_STRING;
 
-/**Javascript native boolean type
+/**Javascript native basic type: boolean
  * @constant
  * @type {string}
  * @default
@@ -39,7 +44,7 @@ py.TYPE_STRING = TYPE_STRING;
 const TYPE_BOOLEAN = "boolean";
 py.TYPE_BOOLEAN = TYPE_BOOLEAN;
 
-/**Javascript basic bigint type
+/**Javascript native basic type: bigint
  * @constant
  * @type {string}
  * @default
@@ -47,7 +52,7 @@ py.TYPE_BOOLEAN = TYPE_BOOLEAN;
 const TYPE_BIGINT = "bigint";
 py.TYPE_BIGINT = TYPE_BIGINT;
 
-/**Javascript basic function type
+/**Javascript native basic type: function
  * @constant
  * @type {string}
  * @default
@@ -55,7 +60,7 @@ py.TYPE_BIGINT = TYPE_BIGINT;
 const TYPE_FUNCTION = "function";
 py.TYPE_FUNCTION = TYPE_FUNCTION;
 
-/**Javascript basic symbol type
+/**Javascript native basic type: symbol
  * @constant
  * @type {string}
  * @default
@@ -63,7 +68,7 @@ py.TYPE_FUNCTION = TYPE_FUNCTION;
 const TYPE_SYMBOL = "symbol";
 py.TYPE_SYMBOL = TYPE_SYMBOL;
 
-/**Javascript basic undefined type
+/**Javascript native basic type: undefined
  * @constant
  * @type {string}
  * @default
@@ -71,35 +76,71 @@ py.TYPE_SYMBOL = TYPE_SYMBOL;
 const TYPE_UNDEFINED = "undefined";
 py.TYPE_UNDEFINED = TYPE_UNDEFINED;
 
+
 /* Basic objects */
-/**Javascript Object type
+/**Javascript native object type: Object
  * @constant
  * @type {string}
  * @default
  **/
 const TYPE_OBJECT = "Object";
-py.TYPE_OBJECT = "Object";
+py.TYPE_OBJECT = TYPE_OBJECT;
 
-
+/**Javascript native object type: Array
+ * @constant
+ * @type {string}
+ * @default
+ **/
 const TYPE_ARRAY = "Array";
 py.TYPE_ARRAY = TYPE_ARRAY;
 
-
+/**Javascript native object type: String
+ * @constant
+ * @type {string}
+ * @default
+ **/
 const TYPE_STRING_OBJECT = "String";
 py.TYPE_STRING_OBJECT = TYPE_STRING_OBJECT;
 
+/**Javascript native object type: null
+ * @constant
+ * @type {string}
+ * @default
+ **/
 const TYPE_NULL = "null";
-py.TYPE_NULL = TYPE_STRING_OBJECT;
+py.TYPE_NULL = TYPE_NULL;
+
 
 /* Additional library objects */
-py.TYPE_PY_DICT = "Dictionary";
+/**Javascript reimplementation of Python type: dict {@ref dict}
+ * @constant
+ * @type {string}
+ * @default
+ **/
+const TYPE_PY_DICT = "dict";
+py.TYPE_PY_DICT = TYPE_PY_DICT;
 
 /* Type aliases */
-py.True = true;
-py.False = false;
-py.None = null;
+/**
+ * Alias of Javascript true.
+ * @type {boolean}
+ */
+const True = true;
+py.True = True;
 
+/**
+ * Alias of Javascript false.
+ * @type {boolean}
+ */
+const False = false;
+py.False = False;
 
+/**
+ * Alias of Javascript null.
+ * @type {null}
+ */
+const None = null;
+py.None = None;
 
 
 //  -----------------------------------------------------
@@ -211,11 +252,11 @@ py.ValueError = ValueError;
 
 
 /**
- * A python-like dictionary class.
+ * Javascript reimplementation of Python dict.
  *
- * TODO: continue implementation as https://docs.python.org/3.7/library/stdtypes.html#typesmapping
+ * Python equivalent: {@link https://docs.python.org/3/library/stdtypes.html#dict}
  */
-class Dictionary {
+class dict {
     constructor(init_seq) {
         if (py.is_null_or_undefined(init_seq) === false){
             if (py.type(init_seq) === py.TYPE_ARRAY) {
@@ -268,8 +309,7 @@ class Dictionary {
         }
     }
 }
-
-py.Dictionary = Dictionary;
+py.dict = dict;
 
 
 
@@ -282,7 +322,8 @@ py.Dictionary = Dictionary;
 
 
 /** Simple alias */
-py.print = console.log;
+const print = console.log;
+py.print = print;
 
 
 
@@ -302,7 +343,7 @@ py.print = console.log;
  *
  * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#abs}
  * @param x {number}
- * @returns {number}
+ * @return {number}
  */
 function abs(x) {
     if (type(x.__abs__) === TYPE_FUNCTION) {
@@ -311,6 +352,41 @@ function abs(x) {
     else {
         return Math.abs(x);
     }
+}
+
+/**
+ * Return `True` if any element of the iterable is true. If the iterable is empty, return `False`.
+ *
+ * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#any}
+ *
+ * @param iterable {iterable.<*>}
+ * @return {boolean}
+ */
+function any(iterable) {
+    for (const i of iterable) {
+        if (i) {
+            return True;
+        }
+    }
+    return False;
+}
+py.all = all;
+
+/**
+ * Return `True` if all elements of the __iterable__ are true (or if the iterable is empty).
+ *
+ * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#all}
+ *
+ * @param iterable {iterable.<*>}
+ * @return {boolean}
+ */
+function all(iterable) {
+    for (const i of iterable) {
+        if (i) {
+            return True;
+        }
+    }
+    return True;
 }
 
 
