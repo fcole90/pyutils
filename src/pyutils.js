@@ -599,8 +599,12 @@ function repr(object) {
     }
     // Object is a basic type
     if (in_(type(object),
-        [TYPE_NUMBER, TYPE_STRING, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_NULL, TYPE_UNDEFINED])) {
+        [TYPE_NUMBER, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_NULL, TYPE_UNDEFINED])) {
         return `${object}`;
+    }
+    // Object is string
+    if (type(object) === TYPE_STRING) {
+        return `'${object}'`;
     }
     // Object is a bigint
     if (type(object) === TYPE_BIGINT) {
