@@ -461,7 +461,15 @@ py.dict = function(init_seq) {
  *
  */
 function eval_(expression, globals=null, locals=null){
-    return Function(`"use strict";return (${expression})`)();
+    // Using Node.js
+    if (typeof module !== 'undefined' && module.exports) {
+        eval(expression);
+    }
+    // Using a browser
+    else {
+        return Function(`"use strict";return (${expression})`)();
+    }
+    
 }
 py.eval = eval_;
 
@@ -599,7 +607,7 @@ function repr(object) {
     }
     // Object is a basic type
     if (in_(type(object),
-        [TYPE_NUMBER, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_NULL, TYPE_UNDEFINED])) {
+        [TYPE_NUMBER, TYPE_BOOLEAN, TYPE_NULL, TYPE_UNDEFINED])) {
         return `${object}`;
     }
     // Object is string
@@ -617,11 +625,11 @@ function repr(object) {
 
     // Object is not representbe but has a name
     if (!py.is_null_or_undefined(object.name)) {
-        return `<{${type(object)} ${object.name} object>`;
+        return `<${type(object)} ${object.name} object>`;
     }
 
     // Object is not representable
-    return `<{${type(object)} object>`;
+    return `<${type(object)} object>`;
 }
 py.repr = repr;
 
