@@ -1,12 +1,10 @@
-/** Pyutils.
- * @module pyutils
- *
+/**
  * Simple basic utils borrowed from Python builtins and libraries.
  *
  * Both the builtins commands and the standard functions are
  * implemented as functions.
  *
- *
+ * @module pyutils
  */
 
 /* Define the pyutils namespace */
@@ -28,6 +26,7 @@ let py = {};
 const TYPE_NUMBER = "number";
 py.TYPE_NUMBER = TYPE_NUMBER;
 
+
 /**Javascript native basic type: string
  * @constant
  * @type {string}
@@ -36,6 +35,7 @@ py.TYPE_NUMBER = TYPE_NUMBER;
 const TYPE_STRING = "string";
 py.TYPE_STRING = TYPE_STRING;
 
+
 /**Javascript native basic type: boolean
  * @constant
  * @type {string}
@@ -43,6 +43,7 @@ py.TYPE_STRING = TYPE_STRING;
  **/
 const TYPE_BOOLEAN = "boolean";
 py.TYPE_BOOLEAN = TYPE_BOOLEAN;
+
 
 /**Javascript native basic type: bigint
  * @constant
@@ -245,11 +246,9 @@ py.ValueError = ValueError;
 
 
 
-
 //  -----------------------------------------------------
-//  ---------------------- Classes ----------------------
+//  ---------------------- Python Types -----------------
 //  -----------------------------------------------------
-
 
 /**
  * Javascript reimplementation of Python dict.
@@ -312,21 +311,6 @@ class dict {
 py.dict = dict;
 
 
-
-
-//  -----------------------------------------------------
-//  -------------------- Aliases ------------------------
-//  -----------------------------------------------------
-//  ---- Aliases of functions to be easily called. ------
-//  -----------------------------------------------------
-
-
-/** Simple alias */
-const print = console.log;
-py.print = print;
-
-
-
 //  -----------------------------------------------------
 //  -------------------- Functions ----------------------
 //  -----------------------------------------------------
@@ -336,13 +320,15 @@ py.print = print;
 
 
 /**
- * Return the absolute value of a number. The argument may be an integer or a floating point number.
+ * Return the absolute value of a number. The argument may be an integer or a floating point number
+ * or some other object that defines `__abs__()`.
  * If x defines `__abs__()`, `abs(x)` returns `x.__abs__()`.
  *
  * __Note:__ It has no specific support for complex numbers yet.
  *
- * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#abs}
- * @param x {number}
+ * Python equivalent: {@link https://docs.python.org/3/library/functions.html#abs}
+ * @param x
+ * @param [x.__abs__] {?function}
  * @return {number}
  */
 function abs(x) {
@@ -355,22 +341,16 @@ function abs(x) {
 }
 
 /**
- * Return `True` if any element of the iterable is true. If the iterable is empty, return `False`.
- *
- * Python equivalent: {@link https://docs.python.org/3.9/library/functions.html#any}
- *
- * @param iterable {iterable.<*>}
- * @return {boolean}
+ * As {@ref repr}, return a string containing a printable representation of an object,
+ * but escape the non-ASCII characters in the string returned by {@ref repr} using `\x`, `\u` or `\U` escapes.
+ * @param object
+ * @return {string}
  */
-function any(iterable) {
-    for (const i of iterable) {
-        if (i) {
-            return True;
-        }
-    }
-    return False;
+function ascii(object) {
+    throw Error("not implemented");
+    return ""
 }
-py.all = all;
+
 
 /**
  * Return `True` if all elements of the __iterable__ are true (or if the iterable is empty).
@@ -388,39 +368,29 @@ function all(iterable) {
     }
     return True;
 }
-
+py.all = all;
 
 
 /**
- * Convenient way to insert debugging assertions into a program.
- * @param {boolean} condition - Condition to test
- * @param {string} message - Message to display in case of failure
- * @param {ErrorConstructor} error_constructor - Type of error to display
+ * Return `True` if any element of the iterable is true. If the iterable is empty, return `False`.
+ *
+ * Python equivalent: {@link https://docs.python.org/3/library/functions.html#any}
+ *
+ * @param iterable {iterable.<*>}
+ * @return {boolean}
  */
-function assert(condition, message=null, error_constructor=py.AssertionError) {
-    if (py.is_null_or_undefined(condition)) {
-        throw new py.ValueError("the condition cannot be null");
+function any(iterable) {
+    for (const i of iterable) {
+        if (i) {
+            return True;
+        }
     }
-    else if (py.not_in(py.type(condition), [py.TYPE_BOOLEAN, py.TYPE_BOOLEAN_OBJECT])) {
-        throw new py.ValueError(`the condition must be a boolean. Found: ${py.type(condition)}`);
-    }
+    return False;
+}
+py.any = any;
 
-    if (py.is_not_null_or_undefined(message)) {
-        message = py.str(message);
-    }
 
-    if (py.is_null_or_undefined(error_constructor)) {
-        throw new py.ValueError();
-    }
 
-    if (condition === false) {
-        throw new error_constructor(message);
-    }
-    else {
-        return true;
-    }
-};
-py.assert = assert;
 
 py.assert_len = function(obj, expected_length, message=null, error_constructor=py.AssertionError) {
     const obj_len = py.len(obj);
@@ -461,27 +431,40 @@ py.dict = function(init_seq) {
     return new Dictionary(init_seq);
 };
 
-
-
 /**
- * Checks whether the value is contained in the given sequence. Uses strict equality.
- * If an object is provided it checks against its values.
+ * The arguments are a string and optional globals and locals. If provided, globals must be a dictionary.
+ * If provided, locals can be any mapping object.
+ * The expression argument is parsed and evaluated as a Python expression (technically speaking, a condition list)
+ * using the globals and locals dictionaries as global and local namespace.
+ * If the globals dictionary is present and does not contain a value for the key `__builtins__`,
+ * a reference to the dictionary of the built-in module builtins is inserted under that key before expression is parsed.
+ * This means that expression normally has full access to the standard builtins module and restricted
+ * environments are propagated.
+ * If the locals dictionary is omitted it defaults to the globals dictionary. If both dictionaries are omitted,
+ * the expression is executed with the globals and locals in the environment where {@link module:pyutils~eval_} is called.
+ * Note, {@link module:pyutils~eval_} does not have access to the nested scopes (non-locals) in the enclosing environment.
  *
- * @param {*} value - The value to check for membership
- * @param {Iterable.<*>} sequence - Sequence withing to search the value
- * @returns {boolean}
+ * The return value is the result of the evaluated expression. Syntax errors are reported as exceptions.
+ *
+ * Example:
+ * @example
+ * let x = 1;
+ * eval_("x + 1");
+ * // returns 2
+ *
+ * @param expression
+ * @param globals
+ * @param locals
+ * @returns {*}
+ *
+ * TODO: to complete
+ *
  */
-py.in = function(value, sequence) {
+function eval_(expression, globals=null, locals=null){
+    return Function(`"use strict";return (${expression})`)();
+}
+py.eval = eval_;
 
-    sequence = Object.values(sequence);
-
-    for (let i = 0; i < sequence.length; i++) {
-        if (sequence[i] === value) {
-            return true;
-        }
-    }
-    return false;
-};
 
 /**
  * Checks that the value is not contained in the given sequence. Uses strict equality.
@@ -540,6 +523,18 @@ py.module_path = function(path, module_name, extension="mjs") {
 };
 
 
+/** Simple alias */
+
+/**
+ * Print function. So far works like an alias to `console.log`.
+ * @param args
+ */
+function print(...args) {
+    console.log(...args);
+}
+py.print = print;
+
+
 /**
  * Returns a range iterator in the given range.
  * @generator
@@ -574,6 +569,57 @@ function* range(start, stop = null, step = 1) {
 }
 py.range = range;
 
+/**
+ * Return a string containing a printable representation of an object.
+ * For many types, this function makes an attempt to return a string that would yield an object
+ * with the same value when passed to {@link module:pyutils~eval_ | eval}, otherwise the representation is a
+ * string enclosed in angle brackets that contains the name of the type
+ * of the object together with additional information often including
+ * the name and address of the object. A class can control what this function
+ * returns for its instances by defining a `__repr__()` method.
+ *
+ * **Note:** Javascript does not provide a consistent memory reference of the object,
+ * and us such this function doesn't provide one either. Also, for type
+ * {@link https://developer.mozilla.org/en-US/docs/Glossary/symbol | symbol} it does not
+ * attempt to provide a string yielding such object, because a user might expect it to use
+ * it as the original object, when that's not the case, given the nature ot the
+ * {@link https://developer.mozilla.org/en-US/docs/Glossary/symbol | symbol} type.
+ *
+ * Python equivalent: {@link https://docs.python.org/3/library/functions.html#repr}
+ *
+ * @param object
+ * @param [object.__repr__] {function}
+ * @param [obect.name] {string}
+ * @return {string}
+ */
+function repr(object) {
+    // Object has a method defining its representation.
+    if (type(object.__repr__) === TYPE_FUNCTION) {
+        return object.__repr__();
+    }
+    // Object is a basic type
+    if (in_(type(object),
+        [TYPE_NUMBER, TYPE_STRING, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_NULL, TYPE_UNDEFINED])) {
+        return `${object}`;
+    }
+    // Object is a bigint
+    if (type(object) === TYPE_BIGINT) {
+        return `${object}n`;
+    }
+    // Basic JS objects
+    if (type(object) === TYPE_OBJECT) {
+        return "{" + Object.keys(object).map(key => `'${key}': ${repr(object[key])}`).join(", ") + "}";
+    }
+
+    // Object is not representbe but has a name
+    if (!py.is_null_or_undefined(object.name)) {
+        return `<{${type(object)} ${object.name} object>`;
+    }
+
+    // Object is not representable
+    return `<{${type(object)} object>`;
+}
+py.repr = repr;
 
 
 py.str = function(value) {
@@ -612,6 +658,76 @@ function type(obj) {
 };
 py.type = type;
 
+
+
+//  -----------------------------------------------------
+//  -------------------- Commands -----------------------
+//  -----------------------------------------------------
+//  ------------ Python commands as functions. ----------
+//  --------------- In alphabetical order. --------------
+//  -----------------------------------------------------
+
+/**
+ * Convenient way to insert debugging assertions into a program.
+ * @param {boolean} condition - Condition to test
+ * @param {string} message - Message to display in case of failure
+ * @param {ErrorConstructor} error_constructor - Type of error to display
+ */
+function assert(condition, message=null, error_constructor=py.AssertionError) {
+    if (py.is_null_or_undefined(condition)) {
+        throw new py.ValueError("the condition cannot be null");
+    }
+    else if (py.not_in(py.type(condition), [py.TYPE_BOOLEAN, py.TYPE_BOOLEAN_OBJECT])) {
+        throw new py.ValueError(`the condition must be a boolean. Found: ${py.type(condition)}`);
+    }
+
+    if (py.is_not_null_or_undefined(message)) {
+        message = py.str(message);
+    }
+
+    if (py.is_null_or_undefined(error_constructor)) {
+        throw new py.ValueError();
+    }
+
+    if (condition === false) {
+        throw new error_constructor(message);
+    }
+    else {
+        return true;
+    }
+}
+py.assert = assert;
+
+
+/**
+ * Checks whether the value is contained in the given sequence. Uses strict equality.
+ * If an object is provided it checks against its values.
+ *
+ * @param {*} value - The value to check for membership
+ * @param {Iterable.<*>} sequence - Sequence withing to search the value
+ * @returns {boolean}
+ */
+function in_(value, sequence) {
+
+    sequence = Object.values(sequence);
+
+    for (let i = 0; i < sequence.length; i++) {
+        if (sequence[i] === value) {
+            return true;
+        }
+    }
+    return false;
+}
+py.in = in_;
+
+
+
+//  -----------------------------------------------------
+//  -------------------- Extra utils---------------------
+//  -----------------------------------------------------
+//  ------------------- Useful additions ----------------
+//  ---------------- In alphabetical order. -------------
+//  -----------------------------------------------------
 
 
 

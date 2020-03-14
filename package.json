@@ -1,6 +1,6 @@
 {
   "name": "pyutils",
-  "version": "0.3.2-alpha",
+  "version": "0.3.3-alpha",
   "description": "Simple basic utils borrowed from Python builtins and libraries.",
   "homepage": "https://fcole90.github.io/pyutils/",
   "bugs": {
