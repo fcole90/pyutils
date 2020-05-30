@@ -4,5 +4,5 @@
 
 Simple basic utils borrowed from Python builtins and libraries. Work in progress.
 
-
+[See what it can do!](https://fcole90.github.io/interactive_bayesian_optimization/)
 
