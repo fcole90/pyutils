@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/pyutils.png)](https://nodei.co/npm/pyutils/)
 
-Simple basic utils borrowed from Python builtins and libraries.
+Simple basic utils borrowed from Python builtins and libraries. Work in progress.
 
 
 
