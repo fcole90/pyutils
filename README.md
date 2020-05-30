@@ -6,3 +6,6 @@ Simple basic utils borrowed from Python builtins and libraries. Work in progress
 
 [See what it can do!](https://fcole90.github.io/interactive_bayesian_optimization/)
 
+
+This library was initially developed as part of the project [Interactive Bayesian Optimisation](https://github.com/fcole90/interactive_bayesian_optimization).
+
